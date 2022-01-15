@@ -1,4 +1,4 @@
-# Zabbix-Processo-Windows-com-par-metro-external-scripts-
+# Zabbix-Processo-Windows-com-parametro-external-scripts-
 
 O resultado do script é o PercentProcessorTime, esse valor pode ser dividido pelo número de cpus resultando na utilização de cpu do processo com paramâmetro.
 
