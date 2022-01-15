@@ -1,0 +1,13 @@
+#!/usr/bin/env bash
+
+
+IPHOST=$1
+PORTNUM=$2
+PROC=$3
+PARAM=$4
+
+GETPROCESSORS="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k system.cpu.num)"
+
+GETPID="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,select * from Win32_Process where name= '${PROC}' and CommandLine like '%${PARAM}%'"] | jq | awk '/"ProcessId":/ {print $2}' | sed 's/,//g')"
+
+GETCPUTIMEPID="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,SELECT * FROM Win32_PerfFormattedData_PerfProc_Process where IDProcess='${GETPID}'"]  | jq | awk '/"PercentProcessorTime":/ {print $2}' | sed 's/[[:punct:]]//g')"
