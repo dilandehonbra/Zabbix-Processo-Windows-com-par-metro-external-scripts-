@@ -106,21 +106,9 @@ done;
 for i in "${ARRAY[@]}"
 
 	do
-	echo "<item> <name>Get Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.param.mem[${IPHOST},${PORT},${i}]</key> <applications> <application> <name>GetPID</name> </application> </applications> </item>" >> arq.txt
+	echo "<item> <name>Memory usage in %  Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.mem[${IPHOST},${PORT},${i}]</key> <units>B</units> <applications> <application> <name>GetPID</name> </application> </applications> </item>" >> arq.txt
 
 done ;
-
-for l in "${ARRAYS[@]}"
-###TRATAMENTO PARA NOME DOS ITENS CALCULADOS###
-	do
-	 TRATAMENTO=$(echo $l | sed 's/[[:punct:]]/\./g' |tr " " .| sed -E 's/^[.]+//' | sed -E 's/[.]{1,}/\./g' | sed -E 's/[.]+$//')
-	 TRATAMENTONAME=$(echo $l | sed 's/^\%//'| sed 's/\%$//')
-
-	echo "<item> <name>Memory usage in % by process (${TRATAMENTONAME})</name> <type>CALCULATED</type> <key>item.${TRATAMENTO}</key> <value_type>FLOAT</value_type> <units>%</units> <params>last(&quot;win.proc.param.mem[${IPHOST},${PORT},\&quot;${l}\&quot;]&quot;)/last(&quot;system.cpu.num&quot;)</params> <applications> <application> <name>Proc param</name> </application> </applications> </item>" >> arq.txt
-done;
-
-
-
 
     cat << EOF >> arq.txt
 </items>
@@ -136,14 +124,5 @@ done;
 </zabbix_export>
 
 EOF
-cat arq.txt | tr "#" " " >> templates.xml ; rm arq.txt
-root@cbmvbhmonit01:/usr/local/sbin/testes/TESTE/final# ^C
-root@cbmvbhmonit01:/usr/local/sbin/testes/TESTE/final# cat /lib/zabbix/externalscripts/win.proc.param.mem 
-IPHOST=$1
-PORTNUM=$2
-PARAM=$3
-
-
-GETPID="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,select * from Win32_Process where CommandLine like '${PARAM}' "] | jq | awk '/"ProcessId":/ {print $2}' | sed 's/,//g')" 
-
-zabbix_get -s ${IPHOST} -p ${PORTNUM} -k wmi.getall["root\cimv2,SELECT * FROM Win32_PerfFormattedData_PerfProc_Process where IDProcess='${GETPID}'"] | jq | awk '/WorkingSet.:/ {print $2}' | sed 's/[[:punct:]]//g'
+XMLNAME=`echo "$TEMPLATE_NAME" | sed 's/[[:space:]]/_/g'`
+cat arq.txt | tr "#" " " >> $XMLNAME.xml ; rm arq.txt
