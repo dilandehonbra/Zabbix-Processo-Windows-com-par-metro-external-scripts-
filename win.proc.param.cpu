@@ -1,10 +1,11 @@
+#Dilan Severino de Oliveira com a colaboração extrema de Daniel Miyagi
 IPHOST=$1
 PORTNUM=$2
 PARAM=$3
 
 
-GETPID="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,select * from Win32_Process where CommandLine like '${PARAM}' "] | jq | awk '/"ProcessId":/ {print $2}' | sed 's/,//g')" 
+GETPID=$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.get["root\cimv2, SELECT ProcessId from Win32_Process where CommandLine like '${PARAM}' "])
 
+NAMEPROC=$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k 'wmi.get[root\cimv2,SELECT Name FROM Win32_PerfFormattedData_PerfProc_Process  where IDProcess='${GETPID}']')
 
-zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,SELECT * FROM Win32_PerfFormattedData_PerfProc_Process where IDProcess='${GETPID}'"]  | jq | awk '/"PercentProcessorTime":/ {print $2}' | sed 's/[[:punct:]]//g'
- 
+zabbix_get -s ${IPHOST} -p ${PORTNUM} -k perf_counter_en["\Process(${NAMEPROC})\% Processor Time",60]
