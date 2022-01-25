@@ -1,9 +1,9 @@
-IPHOST=$1
-PORTNUM=$2
-PARAM=$3
+#Dilan Severino de Oliveira com a extrema colaboração de Daniel Miyagi
+IPDOHOST=$1
+NUMERODAPORTA=$2
+PARAMETRO=$3
 
+PIDPROC=$(zabbix_get -s ${IPDOHOST} -p ${NUMERODAPORTA}  -k wmi.get["root\cimv2, SELECT ProcessId from Win32_Process where CommandLine like '${PARAMETRO}'"])
 
-GETPID="$(zabbix_get -s ${IPHOST} -p ${PORTNUM}  -k wmi.getall["root\cimv2,select * from Win32_Process where CommandLine like '${PARAM}' "] | jq | awk '/"ProcessId":/ {print $2}' | sed 's/,//g')" 
+zabbix_get -s ${IPDOHOST} -p ${NUMERODAPORTA} -k wmi.get["root\cimv2,SELECT WorkingSet FROM Win32_PerfFormattedData_PerfProc_Process  where IDProcess='${PIDPROC}'"]
 
-zabbix_get -s ${IPHOST} -p ${PORTNUM} -k wmi.getall["root\cimv2,SELECT * FROM Win32_PerfFormattedData_PerfProc_Process where IDProcess='${GETPID}'"] | jq | awk '/WorkingSet.:/ {print $2}' | sed 's/[[:punct:]]//g'
- 
