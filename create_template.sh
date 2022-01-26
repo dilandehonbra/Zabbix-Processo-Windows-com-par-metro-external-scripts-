@@ -57,6 +57,9 @@ TEMPLATE_NAME=$4
             </groups>
             <applications>
                 <application>
+                    <name>Memory by Process</name>
+                <application>
+                <application>
                     <name>GetPID</name>
                 </application>
                 <application>
@@ -106,7 +109,7 @@ done;
 for i in "${ARRAY[@]}"
 
 	do
-	echo "<item> <name>Memory usage Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.mem[${IPHOST},${PORT},${i}]</key> <units>B</units> <applications> <application> <name>GetPID</name> </application> </applications> </item>" >> arq.txt
+	echo "<item> <name>Memory usage Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.mem[${IPHOST},${PORT},${i}]</key> <units>B</units> <applications> <application> <name>Memory by Process</name> </application> </applications> </item>" >> arq.txt
 
 done ;
 
