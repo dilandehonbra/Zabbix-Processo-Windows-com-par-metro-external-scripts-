@@ -106,7 +106,7 @@ done;
 for i in "${ARRAY[@]}"
 
 	do
-	echo "<item> <name>Memory usage in %  Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.mem[${IPHOST},${PORT},${i}]</key> <units>B</units> <applications> <application> <name>GetPID</name> </application> </applications> </item>" >> arq.txt
+	echo "<item> <name>Memory usage Process (\$3)</name> <type>EXTERNAL</type> <key>win.proc.mem[${IPHOST},${PORT},${i}]</key> <units>B</units> <applications> <application> <name>GetPID</name> </application> </applications> </item>" >> arq.txt
 
 done ;
 
